@@ -1,0 +1,1 @@
+{ "dependencies": { "mongoose": "^8.8.2", "mongose": "^0.0.2-security" } }
