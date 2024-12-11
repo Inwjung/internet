@@ -1,6 +1,7 @@
 import Elysia, { Static, t } from "elysia"
 import { _register } from "./account.type"
 import { _pagination, CreatePagination } from "./pagination.type"
+import { _photo } from "./photo.type"
 
 export const _profile = t.Object({
     ...t.Omit(_register, ['password']).properties,
@@ -13,6 +14,7 @@ export const _profile = t.Object({
     created_at: t.Optional(t.Date()),
     updated_at: t.Optional(t.Date()),
 
+    photos: t.Optional(t.Array(_photo)),
 })
 export const _user = t.Object({
     ..._profile.properties,
@@ -25,7 +27,8 @@ const _userPagination = t.Object({
     username: t.Optional(t.String()),
     min_age: t.Optional(t.Number()),
     max_age: t.Optional(t.Number()),
-    looking_for: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),)
+    looking_for: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),),
+    gender: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),)
 })
 
 export const _updateProfile = t.Omit(_profile, ['id', 'username', 'update_at', 'create_at', 'last_active', 'age'])

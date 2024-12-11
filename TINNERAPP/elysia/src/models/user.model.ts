@@ -2,8 +2,9 @@ import mongoose from "mongoose"
 import { IUserDocument, IUserModel } from "../interfaces/user.interface"
 import { register, user } from "../types/account.type"
 import { calculateAge } from "../helpers/date.helper"
+import { Photo } from "./photo.model"
 
-const schema = new mongoose.Schema<IUserDocument, IUserModel>({
+export const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     username: { type: String, required: true, unique: true },
     password_hash: { type: String, required: true },
     display_name: { type: String },
@@ -16,7 +17,7 @@ const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     gender: { type: String },
 
     // todo: implement photo feature
-    // photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }],
+    photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }],
     // todo: implement like feature
     // followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     // following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -31,9 +32,9 @@ schema.methods.toUser = function (): user {
 
 
     // todo: implement like feature
-    // const userPhotos = Array.isArray(this.photos)
-    //     ? this.photos.map(photo => (new Photo(photo)).toPhoto())
-    //     : undefined
+    const userPhotos = Array.isArray(this.photos)
+        ? this.photos.map(photo => (new Photo(photo)).toPhoto())
+        : undefined
 
     // const parseLikeUser = (user: IUserDocument[]) => {
     //     return user.map(u => {
@@ -55,17 +56,16 @@ schema.methods.toUser = function (): user {
         username: this.username,
         created_at: this.created_at,
         updated_at: this.updated_at,
-        // date_of_birth: this.date_of_birth,
+        //date_of_birth: this.date_of_birth,
         age: ageString,
         last_active: this.last_active,
         introduction: this.introduction,
-        interest: this.interest,
         looking_for: this.looking_for,
         location: this.location,
         gender: this.gender,
 
         // todo: photo feature
-        // photos: userPhotos,
+        photos: userPhotos,
         // todo: like feature
         // following: following,
         // followers: followers,

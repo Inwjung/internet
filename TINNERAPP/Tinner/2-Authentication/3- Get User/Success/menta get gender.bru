@@ -1,19 +1,19 @@
 meta {
-  name: menta get - gender
+  name: menta get gender
   type: http
-  seq: 1
+  seq: 7
 }
 
 get {
-  url: {{tinner_url}}/user/?pageSize=10&currentPage=1&gender=all
+  url: {{tinner_url}}/user/?pageSize=20&currentPage=1&gender=female
   body: none
   auth: none
 }
 
 params:query {
-  pageSize: 10
+  pageSize: 20
   currentPage: 1
-  gender: all
+  gender: female
 }
 
 headers {

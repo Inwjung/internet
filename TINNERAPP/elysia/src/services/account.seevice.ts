@@ -3,7 +3,9 @@ import { login, register, user } from "../types/account.type"
 
 export const AccountService = {
     login: async function (loginDeta: login): Promise<user> {
-        const user = await User.findOne({ username: loginDeta.username }).exec()
+        const user = await User.findOne({ username: loginDeta.username })
+            .populate("photos")
+            .exec()
         if (!user)
             throw new Error("User does not exist")
         const verifyPassword = await user.verifyPassword(loginDeta.password)

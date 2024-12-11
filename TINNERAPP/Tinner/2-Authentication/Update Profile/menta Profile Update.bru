@@ -1,0 +1,29 @@
+meta {
+  name: menta Profile Update
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{tinner_url}}/user/?pageSize=2&currentPage=1
+  body: json
+  auth: none
+}
+
+params:query {
+  pageSize: 2
+  currentPage: 1
+}
+
+headers {
+  authorization: Bearer {{menta_token}}
+}
+
+body:json {
+  {
+    "display_name":"superman",
+    "looking_for":"female",
+    "introduction":"Hello World"
+  }
+  
+}
