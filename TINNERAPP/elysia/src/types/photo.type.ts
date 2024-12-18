@@ -20,6 +20,7 @@ export type photo = Static<typeof _photo>
 
 export const PhotoDto = new Elysia().model({
     upload: _uploafdPhoto,
+    photo_id: t.Object({ photo_id: t.String() }),
 
     photo: _photo,
     photos: t.Array(_photo)

@@ -5,6 +5,11 @@ export const AccountService = {
     login: async function (loginDeta: login): Promise<user> {
         const user = await User.findOne({ username: loginDeta.username })
             .populate("photos")
+
+            .populate({
+                pats: "following",
+                sel
+            })
             .exec()
         if (!user)
             throw new Error("User does not exist")

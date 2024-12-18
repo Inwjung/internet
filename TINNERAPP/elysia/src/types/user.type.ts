@@ -2,6 +2,7 @@ import Elysia, { Static, t } from "elysia"
 import { _register } from "./account.type"
 import { _pagination, CreatePagination } from "./pagination.type"
 import { _photo } from "./photo.type"
+import { profile } from "bun:jsc"
 
 export const _profile = t.Object({
     ...t.Omit(_register, ['password']).properties,
@@ -19,6 +20,8 @@ export const _profile = t.Object({
 export const _user = t.Object({
     ..._profile.properties,
     //todo:implement like feature
+    followers: t.Optional(t.Array(t.Union([t.Partial(_profile), t.String()]))),
+    following: t.Optional(t.Array(t.Union([t.Partial(_profile), t.String()]))),
 })
 
 
@@ -39,6 +42,7 @@ export const UserDto = new Elysia().model({
     updateProfile: _updateProfile,
     users: _userPaginator,
     user: _user,
+    target_id: t.Object({ target_id: t.String() }),
 })
 
 export type updateProfile = Static<typeof _updateProfile>
