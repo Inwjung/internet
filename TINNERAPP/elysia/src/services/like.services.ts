@@ -1,7 +1,7 @@
 import mongoose, { Query } from "mongoose"
 import { User } from "../models/user.model"
 import { QueryHelper } from "../helpers/query.helper"
-import { user, userPaginator } from "../types/user.type"
+import { user, userPagination, userPaginator } from "../types/user.type"
 
 export const LikeService = {
     toggleLike: async function (user_id: string, target_id: string): Promise<boolean> {
@@ -23,7 +23,7 @@ export const LikeService = {
         return true
     },
 
-    getFollowers: async function (user_id: string, pagination: userPaginator): Promise<userPaginator> {
+    getFollowers: async function (user_id: string, pagination: userPagination): Promise<userPaginator> {
         const _query = User.findById(user_id)
             .populate({
                 path: "followers",
@@ -51,7 +51,7 @@ export const LikeService = {
 
     },
 
-    getFollowing: async function (user_id: string, pagination: userPaginator): Promise<userPaginator> {
+    getFollowing: async function (user_id: string, pagination: userPagination): Promise<userPaginator> {
         const _query = User.findById(user_id)
             .populate({
                 path: "following",
@@ -70,7 +70,9 @@ export const LikeService = {
         pagination.length = total[0].count
         let following: user[] = []
         if (docs) {
-            following = docs.followers as user[]
+            // following = docs.following as user[]
+            following = docs.toUser()['followers'] as user[]
+
         }
         return {
             pagination: pagination,

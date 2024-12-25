@@ -1,9 +1,17 @@
 import Elysia, { Static, t } from "elysia"
-import { _register } from "./account.type"
+
 import { _pagination, CreatePagination } from "./pagination.type"
 import { _photo } from "./photo.type"
 import { profile } from "bun:jsc"
 
+export const _register = t.Object({
+    username: t.String(),
+    password: t.String(),
+    display_name: t.String(),
+    date_of_birth: t.Optional(t.Date()),
+    looking_for: t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),
+    gender: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]))
+})
 export const _profile = t.Object({
     ...t.Omit(_register, ['password']).properties,
     id: t.String(),
