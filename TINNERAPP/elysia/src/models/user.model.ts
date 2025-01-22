@@ -1,10 +1,11 @@
 import mongoose from "mongoose"
 import { IUserDocument, IUserModel } from "../interfaces/user.interface"
-import { register, user } from "../types/account.type"
+import { register } from "../types/account.type"
 import { calculateAge } from "../helpers/date.helper"
+import { user } from "../types/user.type"
 import { Photo } from "./photo.model"
 
-export const schema = new mongoose.Schema<IUserDocument, IUserModel>({
+const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     username: { type: String, required: true, unique: true },
     password_hash: { type: String, required: true },
     display_name: { type: String },
@@ -16,9 +17,8 @@ export const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     location: { type: String },
     gender: { type: String },
 
-    // todo: implement photo feature
     photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }],
-    // todo: implement like feature
+
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, {
@@ -31,11 +31,11 @@ schema.methods.toUser = function (): user {
         ageString = `${calculateAge(this.date_of_birth)}`
 
 
-    // todo: implement like feature
     const userPhotos = Array.isArray(this.photos)
         ? this.photos.map(photo => (new Photo(photo)).toPhoto())
         : undefined
 
+    // todo: implement like feature
     const parseLikeUser = (user: IUserDocument[]) => {
         return user.map(u => {
             if (u.display_name)
@@ -56,33 +56,34 @@ schema.methods.toUser = function (): user {
         username: this.username,
         created_at: this.created_at,
         updated_at: this.updated_at,
-        //date_of_birth: this.date_of_birth,
+        // date_of_birth: this.date_of_birth,
         age: ageString,
         last_active: this.last_active,
         introduction: this.introduction,
-        looking_for: this.looking_for,
+        interest: this.interest,
+        looking_for: this.looking_for ?? 'all',
         location: this.location,
         gender: this.gender,
 
-        // todo: photo feature
         photos: userPhotos,
-        // todo: like feature
+
         following: following,
         followers: followers,
     }
 }
+
 schema.methods.verifyPassword = async function (password: string): Promise<boolean> {
     return await Bun.password.verify(password, this.password_hash)
 }
 
-schema.statics.createUser = async function (registerDate: register): Promise<IUserDocument> {
+schema.statics.createUser = async function (registerData: register): Promise<IUserDocument> {
     const newUser = await new this({
-        display_name: registerDate.display_name,
-        username: registerDate.username,
-        password_hash: await Bun.password.hash(registerDate.password),
-        date_of_birth: registerDate.date_of_birth,
-        looking_for: registerDate.looking_for,
-        gender: registerDate.gender,
+        display_name: registerData.display_name,
+        username: registerData.username,
+        password_hash: await Bun.password.hash(registerData.password),
+        date_of_birth: registerData.date_of_birth,
+        looking_for: registerData.looking_for,
+        gender: registerData.gender,
     })
 
     await newUser.save()

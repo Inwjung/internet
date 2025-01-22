@@ -1,27 +1,27 @@
+import { file } from "bun"
 import Elysia, { error, t } from "elysia"
 import { ImageHelper } from "../helpers/image.helper"
 import { PhotoDto } from "../types/photo.type"
-import { AuthiMiddleWare, AuthPayload } from "../middlewares/auth.middleware"
+import { AuthMiddleWare, AuthPayload } from "../middlewares/auth.middleware"
 import { PhotoService } from "../services/photo.service"
-import { set } from "mongoose"
-
 
 export const PhotoController = new Elysia({
     prefix: "api/photo",
-    tags: ['photo']
+    tags: ['Photo']
 })
     .use(PhotoDto)
-    .use(AuthiMiddleWare)
+    .use(AuthMiddleWare)
 
     .patch('/:photo_id', async ({ params: { photo_id }, set, Auth }) => {
-        const user_id = (Auth.payload as AuthPayload).id
-        await PhotoService.setAvatar(photo_id, user_id)
-        set.status = "No Content"
         try {
-            await PhotoService.delete(photo_id)
+            const user_id = (Auth.payload as AuthPayload).id
+            await PhotoService.setAvatar(photo_id, user_id)
             set.status = "No Content"
         } catch (error) {
             set.status = "Bad Request"
+            if (error instanceof Error)
+                throw error
+            throw new Error("Something went wrong, try again later !!")
         }
     }, {
         detail: { summary: "Set Avatar" },
@@ -32,12 +32,12 @@ export const PhotoController = new Elysia({
     .delete('/:photo_id', async ({ params: { photo_id }, set }) => {
         try {
             await PhotoService.delete(photo_id)
-            set.status = "Bad Request"
+            set.status = "No Content"
         } catch (error) {
             set.status = "Bad Request"
             if (error instanceof Error)
                 throw error
-            throw new Error("Something went wrong, try again later !! ")
+            throw new Error("Something went wrong, try again later !!")
         }
     }, {
         detail: { summary: "Delete photo by photo_id" },
@@ -45,23 +45,28 @@ export const PhotoController = new Elysia({
         params: "photo_id"
     })
 
+    .get('/', async ({ Auth }) => {
+        const user_id = (Auth.payload as AuthPayload).id
+        return await PhotoService.getPhotos(user_id)
+    }, {
+        detail: { summary: "Get photo[] by user_id" },
+        isSignIn: true,
+        response: "photos"
+    })
+
     .post('/', async ({ body: { file }, set, Auth }) => {
         const user_id = (Auth.payload as AuthPayload).id
         try {
-            PhotoService.upload(file, user_id)
             return await PhotoService.upload(file, user_id)
         } catch (error) {
             set.status = "Bad Request"
             if (error instanceof Error)
                 throw error
-            throw new Error("Something went wrong, try again later !! ")
+            throw new Error("Something went wrong, try again later !!")
         }
     }, {
-
         detail: { summary: "Upload Photo" },
         body: "upload",
         response: "photo",
         isSignIn: true
     })
-
-

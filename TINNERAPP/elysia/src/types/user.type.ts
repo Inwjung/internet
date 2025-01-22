@@ -1,17 +1,8 @@
 import Elysia, { Static, t } from "elysia"
-
+import { _register } from "./register.type"
 import { _pagination, CreatePagination } from "./pagination.type"
 import { _photo } from "./photo.type"
-import { profile } from "bun:jsc"
 
-export const _register = t.Object({
-    username: t.String(),
-    password: t.String(),
-    display_name: t.String(),
-    date_of_birth: t.Optional(t.Date()),
-    looking_for: t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),
-    gender: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]))
-})
 export const _profile = t.Object({
     ...t.Omit(_register, ['password']).properties,
     id: t.String(),
@@ -23,26 +14,31 @@ export const _profile = t.Object({
     created_at: t.Optional(t.Date()),
     updated_at: t.Optional(t.Date()),
 
-    photos: t.Optional(t.Array(_photo)),
+    photos: t.Optional(t.Array(_photo))
 })
+
 export const _user = t.Object({
     ..._profile.properties,
-    //todo:implement like feature
+    //todo: implement like feature
     followers: t.Optional(t.Array(t.Union([t.Partial(_profile), t.String()]))),
     following: t.Optional(t.Array(t.Union([t.Partial(_profile), t.String()]))),
 })
 
+export const _userAndToken = t.Object({
+    user: _user,
+    token: t.String()
+})
 
 const _userPagination = t.Object({
     ..._pagination.properties,
     username: t.Optional(t.String()),
     min_age: t.Optional(t.Number()),
     max_age: t.Optional(t.Number()),
-    looking_for: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),),
-    gender: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')]),)
+    looking_for: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')])),
+    gender: t.Optional(t.Union([t.Literal('male'), t.Literal('female'), t.Literal('all')])),
 })
 
-export const _updateProfile = t.Omit(_profile, ['id', 'username', 'update_at', 'create_at', 'last_active', 'age'])
+export const _updateProfile = t.Omit(_profile, ['id', 'username', 'updated_at', 'created_at', 'last_active', 'age'])
 export const _userPaginator = CreatePagination(_user, _userPagination)
 
 export const UserDto = new Elysia().model({

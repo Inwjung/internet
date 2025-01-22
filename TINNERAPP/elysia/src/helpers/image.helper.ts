@@ -1,6 +1,6 @@
 import { fileTypeFromBuffer } from 'file-type'
 
-const acceptImageTypes = ['image/jpeg', 'image/png', 'image']
+const acceptFileTypes = ['image/jpeg', 'image/png']
 
 export const ImageHelper = {
     isImage: async function (fileArrayBuffer: ArrayBuffer): Promise<boolean> {
@@ -8,6 +8,6 @@ export const ImageHelper = {
         const fileTypeResult = await fileTypeFromBuffer(fileArrayBuffer)
         if (fileTypeResult === undefined)
             return false
-        return acceptImageTypes.includes(fileTypeResult.mime)
+        return acceptFileTypes.includes(fileTypeResult.mime)
     }
 }

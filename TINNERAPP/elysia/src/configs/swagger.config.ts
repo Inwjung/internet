@@ -6,6 +6,6 @@ export const swaggerConfig = swagger({
         info: {
             title: "Tinner App API",
             version: "1.0.1"
-        }
+        },
     }
 })
