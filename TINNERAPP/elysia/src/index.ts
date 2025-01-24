@@ -10,6 +10,7 @@ import { UserController } from "./controllers/user.controller"
 import staticPlugin from "@elysiajs/static"
 import { PhotoController } from "./controllers/photo.controller"
 import { LikeController } from "./controllers/like.controller"
+import { ErrorController } from "./controllers/error.contorller"
 
 MongoDB.connect()
 
@@ -28,6 +29,7 @@ const app = new Elysia()
   .use(UserController)
   .use(PhotoController)
   .use(LikeController)
+  .use(ErrorController)
 
   .listen({
     port: Bun.env.PORT || 8000,
